@@ -4,15 +4,15 @@ const { SEMMA_API_URL } = require('./config');
 
 const router = express.Router();
 
-router.get('/piato', (req, res) => getLunch(req, res, 207735));
-router.get('/maija', (req, res) => getLunch(req, res, 207659));
+router.get('/piato', (req, res) => getLunch(req, res, 1408));
+router.get('/maija', (req, res) => getLunch(req, res, 1402));
 
-const getLunch = async (req, res, restaurantPageId) => {
+const getLunch = async (req, res, restaurantId) => {
   try {
-    const date = new Date().toISOString().split('T')[0];
-    const url = `${SEMMA_API_URL}?date=${date}&language=fi&onlyPublishedMenu=true&restaurantPageId=${restaurantPageId}`;
+    const date = new Date().toISOString();
+    const url = `${SEMMA_API_URL}?date=${date}&language=fi&costCenter=${restaurantId}`;
     const data = await fetchData(url);
-    res.send(data?.LunchMenu?.SetMenus || []);
+    res.send(data?.menuPackages || []);
   } catch (err) {
     handleError(err, res);
   }
