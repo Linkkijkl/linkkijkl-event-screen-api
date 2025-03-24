@@ -1,3 +1,4 @@
+const ical = require('ical-generator');
 const express = require('express');
 const cheerio = require('cheerio');
 const { fetchData, handleError } = require('./utils');
@@ -43,5 +44,35 @@ router.get('/algo', async (req, res) => {
     handleError(err, res);
   }
 });
+
+router.get('/algo/ical', async (req, res) => {
+  try {
+    const calendar = new ical.ICalCalendar()
+    calendar.name('Algon Tapahtumat')
+    calendar.prodId('-')
+    
+
+    const html = await fetchData(ALGO_EVENTS_URL);
+    const $ = cheerio.load(html);
+    $('article.eventlist-event.eventlist-event--upcoming').each((i, el) => {
+      const summary = $(el).find('a.eventlist-title-link').text();
+      const date = $(el).find('time.event-date').attr('datetime');
+      const startTime = $(el).find('time.event-time-localized-start').text()
+      const endTime = $(el).find('time.event-time-localized-end').text()
+      const start = new Date(Date.parse(`${date}T${startTime.replace('.',':')}`))
+      const end = new Date(Date.parse(`${date}T${endTime.replace('.',':')}`))
+
+      calendar.createEvent({
+        summary,
+        start,
+        end
+      });
+    });
+
+    res.type('text/calendar').send(calendar.toString())
+  } catch (err) {
+    handleError(err, res);
+  }
+})
 
 module.exports = router;
