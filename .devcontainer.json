@@ -1,0 +1,11 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/typescript-node",
+
+  "customizations": {
+    "vscode": {
+      "extensions": []
+    }
+  },
+  "forwardPorts": [4000],
+  "postCreateCommand": "npm install"
+}
