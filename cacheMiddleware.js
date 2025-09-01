@@ -3,7 +3,6 @@ const { CACHE_TIME } = require('./config');
 const cache = {};
 
 const cacheMiddleware = (req, res, next) => {
-    console.log('Hellurei');
     const path = req.path;
     const cached = cache[path];
     const now = Date.now();
@@ -12,8 +11,14 @@ const cacheMiddleware = (req, res, next) => {
         res = cached.res;
         return;
     }
-    // Cache resource
     next();
+    
+    // Don't cache resources which are not found
+    if (res.outputSize == 0) {
+        return;
+    }
+
+    // Cache resource
     cache[path] = {
         'res': res,
         'time': now
