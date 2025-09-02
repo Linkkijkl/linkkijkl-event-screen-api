@@ -64,8 +64,19 @@ router.get('/ical/algo', async (req, res) => {
       let url = $(el).find('a.eventlist-title-link').attr('href');
       url = ALGO_EVENTS_URL + url.replace('/tapahtumat', '')
       const date = $(el).find('time.event-date').attr('datetime');
-      const startTime = $(el).find('time.event-time-localized-start').text()
-      const endTime = $(el).find('time.event-time-localized-end').text()
+      let startTime = $(el).find('time.event-time-localized-start').text()
+      let endTime = $(el).find('time.event-time-localized-end').text()
+      
+      let allDay = false
+      if (!startTime) {
+        startTime = '00.00'
+        allDay = true
+      }
+      if (!endTime) {
+        endTime = '23.59'
+        allDay = true
+      }
+    
       const start = new Date(Date.parse(`${date}T${startTime.replace('.',':')}`))
       const end = new Date(Date.parse(`${date}T${endTime.replace('.',':')}`))
 
@@ -74,7 +85,8 @@ router.get('/ical/algo', async (req, res) => {
         start,
         end,
         url,
-        location
+        location,
+        allDay: allDay
       });
     });
 
