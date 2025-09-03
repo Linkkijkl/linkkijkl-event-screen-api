@@ -13,9 +13,23 @@ const getLunch = async (req, res, apiURL, restaurantId) => {
     const url = `${apiURL}?date=${date}&language=fi&costCenter=${restaurantId}`;
     const data = await fetchData(url);
 
-    const menuPackages = data?.menuPackages.filter(item => 
+    let menuPackages = data?.menuPackages.filter(item => 
         ! item.price?.includes("EI KELA")
-    )
+    );
+
+    substitutions = {
+      "Papas Arrugadas -": "Ryyppy",
+      "Hauskat": "Niukat",
+    };
+
+    menuPackages = menuPackages.map(item => {
+      Object.keys(substitutions)
+        .filter(keyword => item.name.includes(keyword))
+        .forEach(keyword => {
+          item.name = item.name.replaceAll(keyword, substitutions[keyword])
+        });
+      return item;
+    });
 
     res.send(menuPackages || []);
   } catch (err) {
