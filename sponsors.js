@@ -17,17 +17,11 @@ router.get('/linkki', async (req, res) => {
 
 router.get('/algo', async (req, res) => {
   try {
-    const html = await fetchData(ALGO_SPONSORS_URL);
-    const $ = cheerio.load(html);
-    const imageUrls = [];
-    $('.fluid-engine:has(img)').last().find('img').each((i, el) => {
-      const imageUrl = $(el).attr('src');
-      imageUrls.push(imageUrl);
-    });
-    res.json(imageUrls);
+    const data = await fetchData(ALGO_SPONSORS_URL)
+    res.send(data)
   } catch (err) {
     handleError(err, res);
   }
-});
+})
 
 module.exports = router;

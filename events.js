@@ -35,19 +35,12 @@ router.get('/linkki', async (req, res) => {
 
 router.get('/algo', async (req, res) => {
   try {
-    const html = await fetchData(ALGO_EVENTS_URL);
-    const $ = cheerio.load(html);
-    const events = [];
-    $('article.eventlist-event.eventlist-event--upcoming').each((i, el) => {
-      const summary = $(el).find('a.eventlist-title-link').text();
-      const date = $(el).find('time.event-date').attr('datetime');
-      events.push({ summary, start: { date: date } });
-    });
-    res.json({items: events});
+    const data = await fetchData(ALGO_EVENTS_URL)
+    res.send(data)
   } catch (err) {
     handleError(err, res);
   }
-});
+})
 
 router.get('/ical/algo', async (req, res) => {
   try {
